@@ -31,14 +31,14 @@ SaveDialog::SaveDialog(QWidget * parent):
   setOption(QFileDialog::DontUseNativeDialog,true);
   QLayout * l_layout = this->layout();
 
-        
   QVBoxLayout *baseLayout = new QVBoxLayout();
   l_layout->addItem(baseLayout);
-
   appendWavCheckBox =      new QCheckBox(tr("Append .wav extension if needed"), this);
-  rememberFolderCheckBox = new QCheckBox(tr("Remember current folder"), this);
   appendWavCheckBox->setChecked(gdata->getSettingsValue("Dialogs/appendWav", true));
+
+  rememberFolderCheckBox = new QCheckBox(tr("Remember current folder"), this);
   rememberFolderCheckBox->setChecked(gdata->getSettingsValue("Dialogs/rememberSaveFolder", true));
+
   baseLayout->addSpacing(10);
   baseLayout->addWidget(appendWavCheckBox);
   baseLayout->addWidget(rememberFolderCheckBox);
@@ -54,10 +54,11 @@ void SaveDialog::accept(void)
 {
   bool remember = rememberFolderCheckBox->isChecked();
   gdata->setSettingsValue("Dialogs/rememberSaveFolder", remember);
-  if(remember == true) {
-    QDir curDir = directory();
-    gdata->setSettingsValue("Dialogs/saveFilesFolder", curDir.absPath());
-  }
+  if(remember == true)
+    {
+      QDir curDir = directory();
+      gdata->setSettingsValue("Dialogs/saveFilesFolder", curDir.absPath());
+    }
   bool appendWav = appendWavCheckBox->isChecked();
   gdata->setSettingsValue("Dialogs/appendWav", appendWav);
   if(appendWav == true)
