@@ -17,22 +17,26 @@
 #include <qcheckbox.h>
 #include <qlayout.h>
 #include <qlabel.h>
-#include <Q3VBoxLayout>
+#include <QVBoxLayout>
 #include "gdata.h"
 
 //------------------------------------------------------------------------------
 SaveDialog::SaveDialog(QWidget * parent):
-  Q3FileDialog(QDir::convertSeparators(gdata->getSettingsValue("Dialogs/saveFilesFolder", QDir::currentDirPath())),
-               tr("Wave files (*.wav)"), parent, NULL, true)
+  QFileDialog(parent,tr("Save file"),QDir::convertSeparators(gdata->getSettingsValue("Dialogs/saveFilesFolder", QDir::currentDirPath())),tr("Wave files (*.wav)"))
 {
   setCaption(tr("Choose a filename to save under"));
-  setMode(Q3FileDialog::AnyFile);
-  
-  QWidget *baseWidget = new QWidget(this);
-  addWidgets(NULL, baseWidget, NULL);
-  Q3BoxLayout *baseLayout = new Q3VBoxLayout(baseWidget);
-  appendWavCheckBox =      new QCheckBox(tr("Append .wav extension if needed"), baseWidget);
-  rememberFolderCheckBox = new QCheckBox(tr("Remember current folder"), baseWidget);
+  setAcceptMode(QFileDialog::AcceptSave);
+  setFileMode(QFileDialog::AnyFile);
+  setModal(true);
+  setOption(QFileDialog::DontUseNativeDialog,true);
+  QLayout * l_layout = this->layout();
+
+        
+  QVBoxLayout *baseLayout = new QVBoxLayout();
+  l_layout->addItem(baseLayout);
+
+  appendWavCheckBox =      new QCheckBox(tr("Append .wav extension if needed"), this);
+  rememberFolderCheckBox = new QCheckBox(tr("Remember current folder"), this);
   appendWavCheckBox->setChecked(gdata->getSettingsValue("Dialogs/appendWav", true));
   rememberFolderCheckBox->setChecked(gdata->getSettingsValue("Dialogs/rememberSaveFolder", true));
   baseLayout->addSpacing(10);
@@ -51,18 +55,21 @@ void SaveDialog::accept(void)
   bool remember = rememberFolderCheckBox->isChecked();
   gdata->setSettingsValue("Dialogs/rememberSaveFolder", remember);
   if(remember == true) {
-    const QDir *curDir = dir();
-    gdata->setSettingsValue("Dialogs/saveFilesFolder", curDir->absPath());
-    delete curDir;
+    QDir curDir = directory();
+    gdata->setSettingsValue("Dialogs/saveFilesFolder", curDir.absPath());
   }
   bool appendWav = appendWavCheckBox->isChecked();
   gdata->setSettingsValue("Dialogs/appendWav", appendWav);
-  if(appendWav == true) {
-    QString s = selectedFile();
-    if(!s.lower().endsWith(".wav")) { s += ".wav"; }
-    setSelection(s);
-  }
-  Q3FileDialog::accept();
+  if(appendWav == true)
+    {
+      QString s = selectedFile();
+      if(!s.lower().endsWith(".wav"))
+	{
+	  s += ".wav";
+	}
+      selectFile(s);
+    }
+  QFileDialog::accept();
 }
 
 //------------------------------------------------------------------------------
