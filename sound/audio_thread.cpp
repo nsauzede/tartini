@@ -14,8 +14,7 @@
 ***************************************************************************/
 #include <stdio.h>
 #include <math.h>
-#include <qrect.h>
-//Added by qt3to4:
+#include <QRect>
 #include <QCustomEvent>
 #include <QMutex>
 
@@ -179,21 +178,20 @@ int AudioThread::doStuff(void)
       if(!_playSoundFile->playChunk())
 	{
 	  //end of file
-	  QApplication::postEvent( ((MainWindow*)qApp->mainWidget()), new QCustomEvent(UPDATE_SLOW)); //for qt3.x
-	  //stop the audio thread playing
-	  return 0;
+	  QApplication::postEvent( ((MainWindow*)qApp->mainWidget()), new QCustomEvent(UPDATE_SLOW));
+	  return 0; //stop the audio thread playing
 	}
-    if(!gdata->getAudioStream())
-      {
-	if (++sleepCount % 4 == 0)
-	  {
-	    int sleepval = (1000 * _playSoundFile->framesPerChunk()) / _playSoundFile->rate();
-	    msleep(sleepval * 4);
-	  }
-      }
+      if(!gdata->getAudioStream())
+	{
+	  if (++sleepCount % 4 == 0)
+	    {
+	      int sleepval = (1000 * _playSoundFile->framesPerChunk()) / _playSoundFile->rate();
+	      msleep(sleepval * 4);
+	    }
+	}
     }
   else if(gdata->getSoundMode() == SOUND_REC)
-    {
+    { 
       // SOUND_REC
       int bufferChunks = gdata->getAudioStream()->inTotalBufferFrames() / _recSoundFile->framesPerChunk();
       if(frame_num > bufferChunks)
@@ -209,9 +207,8 @@ int AudioThread::doStuff(void)
 	  if(!SoundFile::playRecordChunk(_playSoundFile, _recSoundFile))
 	    {
 	      //end of file
-	      QApplication::postEvent( ((MainWindow*)qApp->mainWidget()), new QCustomEvent(UPDATE_SLOW)); //for qt3.x
-	      //stop the audio thread playing
-	      return 0;
+	      QApplication::postEvent( ((MainWindow*)qApp->mainWidget()), new QCustomEvent(UPDATE_SLOW));
+	      return 0; //stop the audio thread playing
 	    }
 	}
     }
