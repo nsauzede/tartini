@@ -21,11 +21,11 @@
 #include <algorithm>
 #include "channel.h"
 
-#include <q3progressbar.h>
+#include <QProgressBar>
 #include "mainwindow.h"
-#include <qstatusbar.h>
-#include <qlabel.h>
-#include <qdir.h>
+#include <QStatusBar>
+#include <QLabel>
+#include <QDir>
 
 #include "audio_stream.h"
 #include "wave_stream.h"
@@ -606,8 +606,9 @@ void SoundFile::preProcess(void)
   QStatusBar *theStatusBar = theMainWindow->statusBar();
   QLabel *message = new QLabel("Preprocessing data:", theStatusBar, "message");
 
-  Q3ProgressBar *progress = new Q3ProgressBar(stream->totalFrames() / framesPerChunk(), theStatusBar, "progress bar");
-  progress->setProgress(0);
+  QProgressBar *progress = new QProgressBar(theStatusBar);
+  progress->setRange(0,stream->totalFrames() / framesPerChunk() - 1);
+  progress->setValue(0);
   progress->setMaximumHeight(16);
 
 
@@ -618,7 +619,7 @@ void SoundFile::preProcess(void)
   progress->show();
 
   int frameCount = 1;
-  int updateInterval = MAX(1, progress->totalSteps() / 50); // We'll update 50 times only
+  int updateInterval = MAX(1, (progress->maximum() - progress->minimum() +1) / 50); // We'll update 50 times only
 
   while(readChunk(framesPerChunk()) == framesPerChunk())
     { // put data in channels
@@ -629,7 +630,7 @@ void SoundFile::preProcess(void)
 
       if (frameCount % updateInterval == 0)
 	{
-	  progress->setProgress(progress->progress() + updateInterval);
+	  progress->setValue(progress->value() + updateInterval);
 	  qApp->processEvents();
 	  frameCount = 1;
 	}
@@ -643,7 +644,7 @@ void SoundFile::preProcess(void)
   jumpToChunk(0);
 
 
-  progress->setProgress(progress->totalSteps());
+  progress->setValue(progress->maximum());
   theStatusBar->removeWidget(progress);
   theStatusBar->removeWidget(message);
   delete progress;
