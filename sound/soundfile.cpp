@@ -143,7 +143,7 @@ void SoundFile::setFilteredFilename(const char *filteredFilename_)
 //------------------------------------------------------------------------------
 QString SoundFile::getNextTempFilename(void) const
 {
-  QString tempFileFolder = gdata->getSettingsValue("General/tempFilesFolder", QDir::convertSeparators(QDir::currentDirPath()));
+  QString tempFileFolder = gdata->getSettingsValue("General/tempFilesFolder", QDir::convertSeparators(QDir::currentPath()));
   QDir dir = QDir(tempFileFolder);
   QFileInfo fileInfo;
   QString fileName;
@@ -162,9 +162,8 @@ QString SoundFile::getNextTempFilename(void) const
 	  fileExists = true;
 	  index++;
 	}
-    }
-  while(fileExists);
-  return fileInfo.absFilePath();
+    } while(fileExists);
+  return fileInfo.absoluteFilePath();
 }
 
 //------------------------------------------------------------------------------
@@ -174,7 +173,8 @@ bool SoundFile::openRead(const char *filename_)
   setSaved(true);
 
   setFilename(filename_);
-  setFilteredFilename(getNextTempFilename());
+  QByteArray l_array = getNextTempFilename().toLocal8Bit();
+  setFilteredFilename(l_array.data());
   fprintf(stderr, "Opening file: %s\n(FilteredFilename: %s)\n", filename, filteredFilename);
   if(str_case_cmp(getFileExtension(filename), "wav") == 0)
     {
@@ -264,7 +264,8 @@ bool SoundFile::openWrite(const char *filename_, int rate_, int channels_, int b
   setFramesPerChunk(stepSize_);
 
   setFilename(filename_);
-  setFilteredFilename(getNextTempFilename());
+  QByteArray l_array = getNextTempFilename().toLocal8Bit();
+  setFilteredFilename(l_array.data());
   
   stream = new WaveStream;
   filteredStream = new WaveStream;
