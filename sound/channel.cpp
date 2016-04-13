@@ -170,7 +170,7 @@ Channel::Channel(SoundFile *p_parent, int p_size, int p_k) :
   visible(true),
   noteIsPlaying(false),
   lookup(0, 128),
-  mutex(new QMutex(true)),
+  mutex(new QMutex(QMutex::Recursive)),
   isLocked(false),
   pronyWindowSize(int(ceil(0.4 / timePerChunk()))),
   fastSmooth(new fast_smooth(p_size / 8)),

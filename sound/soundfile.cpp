@@ -57,7 +57,7 @@ SoundFile::SoundFile(void)
   _chunkNum = 0;
   _offset = 0; //Number of frame to read into file to get to time 0 (half buffer size).
   _saved = true;
-  mutex = new QMutex(true);
+  mutex = new QMutex(QMutex::Recursive);
   firstTimeThrough = true;
   _doingDetailedPitch = false;
 }

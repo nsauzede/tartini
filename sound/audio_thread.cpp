@@ -106,7 +106,7 @@ void AudioThread::run(void)
       _recSoundFile->recordChunk(_recSoundFile->offset());
     }
   
-  QApplication::postEvent(g_main_window, new QCustomEvent(SOUND_STARTED));
+  QApplication::postEvent(g_main_window, new QEvent(static_cast<QEvent::Type>(SOUND_STARTED)));
   gdata->setRunning(STREAM_FORWARD);
 
   while(!stopping)
@@ -140,7 +140,7 @@ void AudioThread::run(void)
   _playSoundFile = NULL;
   _recSoundFile = NULL;
   
-  QApplication::postEvent(g_main_window, new QCustomEvent(SOUND_STOPPED));
+  QApplication::postEvent(g_main_window, new QEvent(static_cast<QEvent::Type>(SOUND_STOPPED)));
 }
 
 //------------------------------------------------------------------------------
@@ -178,7 +178,7 @@ int AudioThread::doStuff(void)
       if(!_playSoundFile->playChunk())
 	{
 	  //end of file
-	  QApplication::postEvent( ((MainWindow*)qApp->mainWidget()), new QCustomEvent(UPDATE_SLOW));
+	  QApplication::postEvent(g_main_window, new QEvent(static_cast<QEvent::Type>(UPDATE_SLOW)));
 	  return 0; //stop the audio thread playing
 	}
       if(!gdata->getAudioStream())
@@ -191,7 +191,7 @@ int AudioThread::doStuff(void)
 	}
     }
   else if(gdata->getSoundMode() == SOUND_REC)
-    { 
+    {
       // SOUND_REC
       int bufferChunks = gdata->getAudioStream()->inTotalBufferFrames() / _recSoundFile->framesPerChunk();
       if(frame_num > bufferChunks)
@@ -207,7 +207,7 @@ int AudioThread::doStuff(void)
 	  if(!SoundFile::playRecordChunk(_playSoundFile, _recSoundFile))
 	    {
 	      //end of file
-	      QApplication::postEvent( ((MainWindow*)qApp->mainWidget()), new QCustomEvent(UPDATE_SLOW));
+	      QApplication::postEvent(g_main_window, new QEvent(static_cast<QEvent::Type>(UPDATE_SLOW)));
 	      return 0; //stop the audio thread playing
 	    }
 	}
@@ -226,13 +226,13 @@ int AudioThread::doStuff(void)
 	  gdata->setNeedUpdate(true);
 	  fast_update_count = 0;
 	  slow_update_count = 0;
-	  QApplication::postEvent(g_main_window, new QCustomEvent(UPDATE_SLOW));
+	  QApplication::postEvent(g_main_window, new QEvent(static_cast<QEvent::Type>(UPDATE_SLOW)));
 	}
       else if(fast_update_count >= fastUpdateAfter)
 	{
 	  gdata->setNeedUpdate(true);
 	  fast_update_count = 0;
-	  QApplication::postEvent(g_main_window, new QCustomEvent(UPDATE_FAST));
+	  QApplication::postEvent(g_main_window, new QEvent(static_cast<QEvent::Type>(UPDATE_FAST)));
 	}
     }
   gdata->doChunkUpdate();
