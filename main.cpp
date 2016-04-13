@@ -75,7 +75,6 @@ int main(int p_argc, char **p_argv)
 
   g_main_window->showMaximized();
     
-  l_app.setMainWidget(g_main_window);
   g_main_window->show();
 
   l_app.connect(&l_app, SIGNAL(lastWindowClosed()), &l_app, SLOT(quit()));
