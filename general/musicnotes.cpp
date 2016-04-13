@@ -17,7 +17,7 @@
 #include "musicnotes.h"
 #include "mystring.h"
 #include "myassert.h"
-#include <qobject.h>
+#include <QObject>
 
 std::vector<MusicKey> gMusicKeys;
 std::vector<MusicScale> gMusicScales;

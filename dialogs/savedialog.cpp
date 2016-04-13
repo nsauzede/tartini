@@ -14,9 +14,9 @@
  ***************************************************************************/
 
 #include "savedialog.h"
-#include <qcheckbox.h>
-#include <qlayout.h>
-#include <qlabel.h>
+#include <QCheckBox>
+#include <QLayout>
+#include <QLabel>
 #include <QVBoxLayout>
 #include "gdata.h"
 
