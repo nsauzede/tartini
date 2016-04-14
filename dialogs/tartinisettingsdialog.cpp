@@ -76,7 +76,9 @@ void TartiniSettingsDialog::loadSetting(QObject *obj, const QString &group)
     {
       QColor color;
       color.setNamedColor(gdata->getSettingsStringValue(fullKey));
-      ((QFrame*)obj)->setPaletteBackgroundColor(color);
+      QPalette l_palette = ((QFrame*)obj)->palette();
+      l_palette.setColor(l_palette.currentColorGroup(),QPalette::Window,color);
+      ((QFrame*)obj)->setPalette(l_palette);
     }
 }
 
