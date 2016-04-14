@@ -42,7 +42,7 @@ void TartiniSettingsDialog::loadSetting(QObject *obj, const QString &group)
   QString key = obj->objectName();
   QString fullKey = group + "/" + key;
 
-  if(obj->isA("QGroupBox"))
+  if(obj->metaObject()->className() == "QGroupBox")
     {
       //Iterate over the groupBox's children
       const QList<QObject*> &widgets = obj->children();
@@ -51,11 +51,11 @@ void TartiniSettingsDialog::loadSetting(QObject *obj, const QString &group)
 	  loadSetting(*it, group);
 	}
     }
-  else if(obj->isA("QLineEdit"))
+  else if(obj->metaObject()->className() == "QLineEdit")
     {
-      ((QLineEdit*)obj)->setText(gdata->getSettingsStringValue(fullKey));
+      ((QLineEdit*)obj)->setText(gdata->getSettingsValue(fullKey).toString());
     }
-  else if(obj->isA("QComboBox"))
+  else if(obj->metaObject()->className() == "QComboBox")
     {
       ((QComboBox*)obj)->setCurrentText(gdata->getSettingsStringValue(fullKey));
     }
@@ -65,13 +65,13 @@ void TartiniSettingsDialog::loadSetting(QObject *obj, const QString &group)
     }
   else if(obj->isA("QCheckBox"))
     {
-      ((QCheckBox*)obj)->setChecked(gdata->getSettingsBoolValue(fullKey));
+      ((QCheckBox*)obj)->setChecked(gdata->getSettingsBoolvalue(fullKey));
     }
-  else if(obj->isA("QSpinBox"))
+  else if(obj->metaObject()->className() == "QSpinBox")
     {
       ((QSpinBox*)obj)->setValue(gdata->getSettingsIntValue(fullKey));
     }
-  else if(obj->isA("QFrame"))
+  else if(obj->metaObject()->className() == "QFrame")
     {
       QColor color;
       color.setNamedColor(gdata->getSettingsStringValue(fullKey));
@@ -177,7 +177,7 @@ void TartiniSettingsDialog::saveSetting(QObject *obj, const QString group)
   QString key = obj->name();
   QString fullKey = group + "/" + key;
 
-  if(obj->isA("QGroupBox"))
+  if(obj->metaObject()->className() == "QGroupBox")
     {
       //Iterate over the groupBox's children
       const QList<QObject*> &widgets = obj->children();
