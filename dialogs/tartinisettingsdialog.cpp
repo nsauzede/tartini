@@ -230,7 +230,7 @@ void TartiniSettingsDialog::saveSettings(void)
 	}
     }
   gdata->syncSettings();
-  QApplication::postEvent(g_main_window, new QCustomEvent(SETTINGS_CHANGED));
+  QApplication::postEvent(g_main_window, new QEvent(static_cast<QEvent::Type>(SETTINGS_CHANGED)));
   TartiniSettingsDialog::accept();
 }
 
