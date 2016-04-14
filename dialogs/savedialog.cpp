@@ -19,10 +19,11 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include "gdata.h"
+#include <assert.h>
 
 //------------------------------------------------------------------------------
 SaveDialog::SaveDialog(QWidget * p_parent):
-  QFileDialog(p_parent,tr("Save file"),QDir::convertSeparators(gdata->getSettingsValue("Dialogs/saveFilesFolder", QDir::currentDirPath())),tr("Wave files (*.wav)"))
+  QFileDialog(p_parent,tr("Save file"),QDir::convertSeparators(gdata->getSettingsValue("Dialogs/saveFilesFolder", QDir::currentPath())),tr("Wave files (*.wav)"))
 {
   setWindowTitle(tr("Choose a filename to save under"));
   setAcceptMode(QFileDialog::AcceptSave);
@@ -57,7 +58,7 @@ void SaveDialog::accept(void)
   if(l_remember == true)
     {
       QDir l_current_dir = directory();
-      gdata->setSettingsValue("Dialogs/saveFilesFolder", l_current_dir.absPath());
+      gdata->setSettingsValue("Dialogs/saveFilesFolder", l_current_dir.absolutePath());
     }
   bool l_append_wav = m_append_wav_check_box->isChecked();
   gdata->setSettingsValue("Dialogs/appendWav", l_append_wav);

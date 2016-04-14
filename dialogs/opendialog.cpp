@@ -23,7 +23,7 @@
 
 //------------------------------------------------------------------------------
 OpenDialog::OpenDialog(QWidget * parent):
-  QFileDialog(parent,tr("Open File"),QDir::convertSeparators(gdata->getSettingsValue("Dialogs/openFilesFolder",QDir::currentDirPath())),"Wave files (*.wav)")
+  QFileDialog(parent,tr("Open File"),QDir::convertSeparators(gdata->getSettingsValue("Dialogs/openFilesFolder",QDir::currentPath())),"Wave files (*.wav)")
 {
   setCaption("Choose a file to open");
   setMode(QFileDialog::ExistingFile);
