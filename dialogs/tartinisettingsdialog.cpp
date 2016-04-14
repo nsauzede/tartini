@@ -177,7 +177,7 @@ void TartiniSettingsDialog::getShading2Color(void)
 //------------------------------------------------------------------------------
 void TartiniSettingsDialog::saveSetting(QObject *obj, const QString group)
 {
-  QString key = obj->name();
+  QString key = obj->objectName();
   QString fullKey = group + "/" + key;
 
   if(obj->metaObject()->className() == "QGroupBox")
