@@ -589,7 +589,7 @@ void AmplitudeWidget::mouseReleaseEvent(QMouseEvent *)
 void AmplitudeWidget::wheelEvent(QWheelEvent * p_mouse_event)
 {
     View & l_view = gdata->getView();
-    if(!(p_mouse_event->state() & (Qt::ControlModifier | Qt::ShiftModifier)))
+    if (!(p_mouse_event->QInputEvent::modifiers() & (Qt::ControlModifier | Qt::ShiftModifier)))
     {
         if(gdata->getRunning() == STREAM_FORWARD)
         {

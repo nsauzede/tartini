@@ -159,7 +159,7 @@ void SummaryDrawWidget::wheelEvent(QWheelEvent * p_event)
 {
     p_event->accept();
 
-    if(p_event->state() == Qt::AltModifier)
+    if(p_event->QInputEvent::modifiers() == Qt::AltModifier)
     {
         int l_hor_scale = toInt(gdata->totalTime() / width() * (p_event->delta() / 10));
         gdata->getView().setCurrentTime(gdata->getView().currentTime() + l_hor_scale);
