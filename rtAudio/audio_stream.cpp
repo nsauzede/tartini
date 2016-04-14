@@ -57,11 +57,11 @@ int AudioStream::open(int mode_, int freq_, int channels_, int /*bits_*/, int bu
   num_buffers = 4;
 
   QStringList inNames = getInputDeviceNames();
-  const char * audioInput = gdata->getSettingsValue("Sound/soundInput", QString("Default"));
+  const char * audioInput = gdata->getSettingsValue("Sound/soundInput", QString("Default")).toStdString().c_str();
   inDevice = getDeviceNumber(audioInput);
 
   QStringList outNames = getOutputDeviceNames();
-  const char * audioOutput = gdata->getSettingsValue("Sound/soundOutput", QString("Default"));
+  const char * audioOutput = gdata->getSettingsValue("Sound/soundOutput", QString("Default")).toStdString().c_str();
   outDevice = getDeviceNumber(audioOutput);
 
   fprintf(stderr, "Input Device %d: %s\n", inDevice, audioInput);
