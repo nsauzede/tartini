@@ -189,11 +189,11 @@ void TartiniSettingsDialog::saveSetting(QObject *obj, const QString group)
 	  saveSetting(*it, group);
 	}
     }
-  else if(obj->isA("QLineEdit"))
+  else if(obj->metaObject()->className() == "QLineEdit")
     {
       gdata->setSettingsValue(fullKey, ((QLineEdit*)obj)->text());
     }
-  else if(obj->isA("QComboBox"))
+  else if(obj->metaObject()->className() == "QComboBox")
     {
       gdata->setSettingsValue(fullKey, ((QComboBox*)obj)->currentText());
     }
@@ -205,7 +205,7 @@ void TartiniSettingsDialog::saveSetting(QObject *obj, const QString group)
     {
       gdata->setSettingsValue(fullKey, ((QCheckBox*)obj)->isChecked());
     }
-  else if(obj->isA("QSpinBox"))
+  else if(obj->metaObject()->className() == "QSpinBox")
     {
       gdata->setSettingsValue(fullKey, ((QSpinBox*)obj)->value());
     }
