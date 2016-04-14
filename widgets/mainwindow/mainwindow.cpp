@@ -181,7 +181,8 @@ MainWindow::MainWindow(void)
 #endif // MYDEBUG
 
     //Create the main Workspace for the view widgets to go in (for MDI)
-    m_the_workspace = new QWorkspace(this, "TheWorkspace");
+    m_the_workspace = new QWorkspace(this);
+    m_the_workspace->setObjectName("TheWorkspace");
     setCentralWidget( m_the_workspace );
   
     //Create the file Toolbar
@@ -200,7 +201,7 @@ MainWindow::MainWindow(void)
     l_save_action->setWhatsThis(tr("Save the active sound to a file"));
     l_file_tool_bar->addAction(l_save_action);
     connect(l_save_action, SIGNAL(triggered()), gdata, SLOT(saveActiveFile()));
-  
+
     QAction * l_close_action = new QAction(QIcon(close32x32_xpm), tr("&Close"), this);
     l_close_action->setShortcut(tr("Ctrl+W"));
     l_close_action->setWhatsThis(tr("Close the active sound. If unsaved will ask to save. Note: Asking can be disabled in the preferences"));
