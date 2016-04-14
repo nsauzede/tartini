@@ -60,7 +60,7 @@ void TartiniSettingsDialog::loadSetting(QObject *obj, const QString &group)
     {
       ((QComboBox*)obj)->setCurrentIndex(((QComboBox*)obj)->findText(gdata->getSettingsStringValue(fullKey)));
     }
-  else if(obj->isA("QPushButton") && ((QPushButton*)obj)->isCheckable())
+  else if(obj->metaObject()->className() == "QPushButton" && ((QPushButton*)obj)->isCheckable())
     {
       ((QPushButton*)obj)->setChecked(gdata->getSettingsBoolValue(fullKey));
     }
@@ -197,7 +197,7 @@ void TartiniSettingsDialog::saveSetting(QObject *obj, const QString group)
     {
       gdata->setSettingsValue(fullKey, ((QComboBox*)obj)->currentText());
     }
-  else if(obj->isA("QPushButton") && ((QPushButton*)obj)->isCheckable())
+  else if(obj->metaObject()->className() == "QPushButton" && ((QPushButton*)obj)->isCheckable())
     {
       gdata->setSettingsValue(fullKey, ((QPushButton*)obj)->isChecked());
     }
