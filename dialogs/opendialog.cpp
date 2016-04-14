@@ -20,13 +20,14 @@
 #include <QCheckBox>
 #include <QVBoxLayout>
 #include "gdata.h"
+#include "assert.h"
 
 //------------------------------------------------------------------------------
 OpenDialog::OpenDialog(QWidget * parent):
   QFileDialog(parent,tr("Open File"),QDir::convertSeparators(gdata->getSettingsValue("Dialogs/openFilesFolder",QDir::currentPath())),"Wave files (*.wav)")
 {
   setCaption("Choose a file to open");
-  setMode(QFileDialog::ExistingFile);
+  setFileMode(QFileDialog::ExistingFile);
 }
 
 //------------------------------------------------------------------------------
@@ -48,7 +49,9 @@ QString OpenDialog::getOpenWavFileName(QWidget *parent)
     {
       return QString();
     }
-  return d.selectedFile();
+  QStringList l_selected_files = d.selectedFiles();
+  assert(1 == l_selected_files.size());
+  return l_selected_files[0];
 }
 
 // EOF

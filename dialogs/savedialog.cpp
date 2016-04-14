@@ -64,8 +64,10 @@ void SaveDialog::accept(void)
   gdata->setSettingsValue("Dialogs/appendWav", l_append_wav);
   if(l_append_wav == true)
     {
-      QString l_selected_file = selectedFile();
-      if(!l_selected_file.lower().endsWith(".wav"))
+      QStringList l_selected_files = selectedFiles();
+      assert(1==l_selected_files.size());
+      QString l_selected_file = l_selected_files[0];
+      if(!l_selected_file.toLower().endsWith(".wav"))
 	{
 	  l_selected_file += ".wav";
 	}
@@ -82,7 +84,11 @@ QString SaveDialog::getSaveWavFileName(QWidget *p_parent)
     {
       return QString();
     }
-  return l_dialog.selectedFile();
+  QStringList l_selected_files = l_dialog.selectedFiles();
+  assert(1==l_selected_files.size());
+  QString l_selected_file = l_selected_files[0];
+
+  return l_selected_file;
 }
 
 // EOF
