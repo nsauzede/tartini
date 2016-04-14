@@ -211,7 +211,8 @@ void TartiniSettingsDialog::saveSetting(QObject *obj, const QString group)
     }
   else if(obj->isA("QFrame"))
     {
-      gdata->setSettingsValue(fullKey, ((QFrame*)obj)->paletteBackgroundColor().name());
+      QColor l_color =  ((QFrame*)obj)->palette().color(QPalette::Window);
+      gdata->setSettingsValue(fullKey,l_color.name());
     }
 }
 
