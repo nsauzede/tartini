@@ -28,7 +28,7 @@
 
 //------------------------------------------------------------------------------
 CorrelationWidget::CorrelationWidget(QWidget *parent):
-  DrawWidget(parent)
+  DrawWidget(parent,"CorrelationWidget")
 {
   aggregateMode = 0;
 }

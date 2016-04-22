@@ -27,7 +27,7 @@
 
 //------------------------------------------------------------------------------
 CepstrumWidget::CepstrumWidget(QWidget *parent):
-  DrawWidget(parent)
+  DrawWidget(parent,"CepstrumWidget")
 {
 }
 
