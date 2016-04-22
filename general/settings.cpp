@@ -159,11 +159,11 @@ void Settings::load()
   //onDiskSettings.beginGroup(QString("/General"));
   
   QStringList l_groups = onDiskSettings.childGroups();
-  for(unsigned int l_group_index = 0 ; l_group_index < l_groups.size() ; ++l_group_index)
+  for(int l_group_index = 0 ; l_group_index < l_groups.size() ; ++l_group_index)
     {
       onDiskSettings.beginGroup(l_groups[l_group_index]);
       QStringList l_keys = onDiskSettings.allKeys();
-      for(unsigned int l_key_index = 0 ; l_key_index < l_keys.size() ; ++l_key_index)
+      for(int l_key_index = 0 ; l_key_index < l_keys.size() ; ++l_key_index)
 	{
 	  settings[l_groups[l_group_index]][l_keys[l_key_index]] = onDiskSettings.value(l_keys[l_key_index]).toString();
 	}
