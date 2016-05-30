@@ -223,7 +223,6 @@ void TartiniSettingsDialog::saveSettings(void)
 	  saveSetting(*it, group);
 	}
     }
-  }
   gdata->syncSettings();
   QApplication::postEvent(g_main_window, new QCustomEvent(SETTINGS_CHANGED));
   TartiniSettingsDialog::accept();

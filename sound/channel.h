@@ -265,7 +265,6 @@ class Channel
   ZoomLookup summaryZoomLookup;
   ZoomLookup normalZoomLookup;
   ZoomLookup amplitudeZoomLookup;
-
 };
 
 /**
