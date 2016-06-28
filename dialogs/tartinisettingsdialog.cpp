@@ -179,7 +179,7 @@ void TartiniSettingsDialog::saveSetting(QObject *obj, const QString group)
 	{
 	  saveSetting(*it, group);
 	}
-  }
+    }
   else if(obj->isA("QLineEdit"))
     {
       gdata->setSettingsValue(fullKey, ((QLineEdit*)obj)->text());
