@@ -105,7 +105,9 @@ void CorrelationWidget::paintEvent( QPaintEvent * )
     }
 
   //draw the horizontal center line
-  get_painter().setPen(QPen(colorBetween(colorGroup().background(), Qt::black, 0.3), 0));
+  QPalette l_palette;
+  QColor l_background_color = l_palette.color(QPalette::Window);
+  get_painter().setPen(QPen(colorBetween(l_background_color, Qt::black, 0.3), 0));
   get_painter().drawLine(0, toInt(dh2), width(), toInt(dh2));
 
   if(active)
@@ -165,7 +167,7 @@ void CorrelationWidget::paintEvent( QPaintEvent * )
 	    {
 	      float highest = data->getPeriodEstimatesAmpAt(data->getHighestCorrelationIndex());
 	      //draw threshold line
-	      get_painter().setPen(QPen(colorBetween(colorGroup().background(), Qt::black, 0.3), 0));
+	      get_painter().setPen(QPen(colorBetween(l_background_color, Qt::black, 0.3), 0));
 	      y = toInt(dh2 - (highest * active->threshold()) * dh2);
 	      get_painter().drawLine(0, y, width(), y);
       
@@ -176,7 +178,7 @@ void CorrelationWidget::paintEvent( QPaintEvent * )
 	      y = toInt(dh2 - highest * dh2);
 	      get_painter().drawEllipse(x - 2, y - 2, 5, 5);
 	    }
-      
+
 	  //draw a dot at the chosen correlation period
 	  if(data->getChosenCorrelationIndex() >= 0)
 	    {

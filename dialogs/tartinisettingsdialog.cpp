@@ -138,30 +138,36 @@ void TartiniSettingsDialog::fileNameChanged(void)
 //------------------------------------------------------------------------------
 void TartiniSettingsDialog::getBackgroundColor(void)
 {
-  QColor color = QColorDialog::getColor(theBackgroundColor->paletteBackgroundColor());
+  QColor color = QColorDialog::getColor(theBackgroundColor->palette().color(QPalette::Window));
   if(color.isValid())
     {
-      theBackgroundColor->setPaletteBackgroundColor(color);
+      QPalette l_palette = theBackgroundColor->palette();
+      l_palette.setColor(l_palette.currentColorGroup(),QPalette::Window,color);
+      theBackgroundColor->setPalette(l_palette);
     }
 }
 
 //------------------------------------------------------------------------------
 void TartiniSettingsDialog::getShading1Color(void)
 {
-  QColor color = QColorDialog::getColor(shading1Color->paletteBackgroundColor());
+  QColor color = QColorDialog::getColor(shading1Color->palette().color(QPalette::Window));
   if(color.isValid())
     {
-      shading1Color->setPaletteBackgroundColor(color);
+      QPalette l_palette = shading1Color->palette();
+      l_palette.setColor(l_palette.currentColorGroup(),QPalette::Window,color);
+      shading1Color->setPalette(l_palette);
     }
 }
 
 //------------------------------------------------------------------------------
 void TartiniSettingsDialog::getShading2Color(void)
 {
-  QColor color = QColorDialog::getColor(shading2Color->paletteBackgroundColor());
+  QColor color = QColorDialog::getColor(shading2Color->palette().color(QPalette::Window));
   if(color.isValid())
     {
-      shading2Color->setPaletteBackgroundColor(color);
+      QPalette l_palette = shading2Color->palette();
+      l_palette.setColor(l_palette.currentColorGroup(),QPalette::Window,color);
+      shading2Color->setPalette(l_palette);
     }
 }
 
