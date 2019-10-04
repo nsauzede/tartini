@@ -679,7 +679,7 @@ QString GData::saveFileAsk(QString oldFilename)
     {
       return QString();
     }
-  newFilename = QDir::convertSeparators(newFilename);
+  newFilename = QDir::toNativeSeparators(newFilename);
   if(newFilename != oldFilename && QFile::exists(newFilename))
     {
       if(QMessageBox::warning(g_main_window, tr("Overwrite File?"),
@@ -702,7 +702,7 @@ int GData::saveFile(SoundFile *s, QString newFilename)
       return 1;
     }
   QString oldFilename(s->getFileName());
-  oldFilename = QDir::convertSeparators(oldFilename);
+  oldFilename = QDir::toNativeSeparators(oldFilename);
   int pos = s->getStream().pos();
   s->getStream().close();
   
@@ -763,7 +763,7 @@ int GData::closeFile(SoundFile *s, int theSavingMode)
     }
   QString newFilename;
   QString oldFilename(s->getFileName());
-  oldFilename = QDir::convertSeparators(oldFilename);
+  oldFilename = QDir::toNativeSeparators(oldFilename);
 
   if(gdata->audioThread.playSoundFile() == s || gdata->audioThread.recSoundFile() == s)
     {

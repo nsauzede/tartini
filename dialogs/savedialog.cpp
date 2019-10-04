@@ -23,7 +23,7 @@
 
 //------------------------------------------------------------------------------
 SaveDialog::SaveDialog(QWidget * p_parent):
-  QFileDialog(p_parent,tr("Save file"),QDir::convertSeparators(gdata->getSettingsValue("Dialogs/saveFilesFolder", QDir::currentPath())),tr("Wave files (*.wav)"))
+  QFileDialog(p_parent,tr("Save file"),QDir::toNativeSeparators(gdata->getSettingsValue("Dialogs/saveFilesFolder", QDir::currentPath())),tr("Wave files (*.wav)"))
 {
   setWindowTitle(tr("Choose a filename to save under"));
   setAcceptMode(QFileDialog::AcceptSave);

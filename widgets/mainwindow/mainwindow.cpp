@@ -22,7 +22,6 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QPushButton>
-#include <QWorkspace>
 #include <QToolButton>
 #include <QLabel>
 #include <QSpinBox>
@@ -38,13 +37,15 @@
 #include <QTextEdit>
 #include <QTextStream>
 #include <QTextBrowser>
+#include <QIcon>
+#include <QMdiArea>
+#include <QMdiSubWindow>
 
 #include <QAction>
 #include <QKeyEvent>
 #include <QEvent>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <QCustomEvent>
 #include <QPrinter>
 #include <QPrintDialog>
 #include <QDesktopServices>
@@ -102,19 +103,18 @@
 #include "mystring.h"
 #include <string.h>
 
-//include the icon .xpm pictures into the program directly
-#include "pics/record32x32.xpm"
-#include "pics/open.xpm"
-#include "pics/close32x32.xpm"
-#include "pics/save32x32.xpm"
+#define record32x32_xpm "pics/record32x32.xpm"
+#define iconOpen "pics/open.xpm"
+#define close32x32_xpm "pics/close32x32.xpm"
+#define save32x32_xpm "pics/save32x32.xpm"
 
-#include "pics/beginning32x32.xpm"
-#include "pics/rewind32x32.xpm"
-#include "pics/play32x32.xpm"
-#include "pics/playrecord32x32.xpm"
-#include "pics/stop32x32.xpm"
-#include "pics/fastforward32x32.xpm"
-#include "pics/end32x32.xpm"
+#define beginning32x32_xpm "pics/beginning32x32.xpm"
+#define rewind32x32_xpm "pics/rewind32x32.xpm"
+#define play32x32_xpm "pics/play32x32.xpm"
+#define playrecord32x32_xpm "pics/playrecord32x32.xpm"
+#define stop32x32_xpm "pics/stop32x32.xpm"
+#define fastforward32x32_xpm "pics/fastforward32x32.xpm"
+#define end32x32_xpm "pics/end32x32.xpm"
 
 #include "pics/autofollow32x32.xpm"
 #include "pics/shadingon32x32.xpm"
@@ -181,7 +181,7 @@ MainWindow::MainWindow(void)
 #endif // MYDEBUG
 
     //Create the main Workspace for the view widgets to go in (for MDI)
-    m_the_workspace = new QWorkspace(this);
+    m_the_workspace = new QMdiArea(this);
     m_the_workspace->setObjectName("TheWorkspace");
     setCentralWidget( m_the_workspace );
   
@@ -373,18 +373,45 @@ MainWindow::MainWindow(void)
     addToolBar(Qt::BottomToolBarArea, l_time_bar_dock);
     l_time_bar_dock->setIconSize(QSize(32, 32));
 
-#if QWT_VERSION == 0x050000
-    m_time_slider = new QwtSlider(l_time_bar_dock, Qt::Horizontal, QwtSlider::None, QwtSlider::BgBoth);
-#else // QWT_VERSION == 0x050000
+#if QWT_VERSION >= 0x060000
+    m_time_slider = new QwtSlider(Qt::Horizontal,l_time_bar_dock);
+    m_time_slider->setScalePosition(QwtSlider::NoScale);
+    // To define background style for Qwt slider there are some setters to control display of groove and trough
+    // m_time_slider->setBackgroundStyle(QwtSlider::BgBoth) ;
+    // Ensure that both Groove and Trough are displayed as it was the case with Qwt 5.x
+    m_time_slider->setGroove(true);
+    m_time_slider->setTrough(true);
+
+    // Due to changes in Qwt desing it seems that the notion of range has been relaced by the notion of Scale defined in qwt_abstract_scale class
+    //  m_time_slider->setRange(gdata->leftTime(), gdata->rightTime(), 1.0/10000.0, 1000);
+    m_time_slider->setScale(gdata->leftTime(), gdata->rightTime());
+
+    // the parameters defining how the slider behave inside the scale is now defined in class qwt_abstract_slider
+    double l_range_wdith = ( gdata->leftTime() < gdata->rightTime() ? gdata->rightTime() - gdata->leftTime() : gdata->leftTime() - gdata->rightTime());
+    unsigned int l_nb_steps = ((unsigned int)(l_range_wdith * 10000.0));
+    m_time_slider->setTotalSteps(l_nb_steps);
+    m_time_slider->setPageSteps(1000);
+
+    // Graphical parameters
+    // setThumbWidth and setThumbLength has been replaced by setHandleSize
+    m_time_slider->setHandleSize(QSize(60,20));
+
+    // Don't know how to deal with margins in Qwt 6.x
+
+#else // QWT_VERSION >= 0x060000
+#if QWT_VERSION >= 0x050000
     m_time_slider = new QwtSlider(l_time_bar_dock, Qt::Horizontal, QwtSlider::NoScale, QwtSlider::BgBoth);
-#endif // QWT_VERSION == 0x050000
-    m_time_slider->setRange(gdata->leftTime(), gdata->rightTime(), 1.0 / 10000.0, 1000);
-    m_time_slider->setValue(l_view.currentTime());
-    m_time_slider->setTracking(true);
+#else // QWT_VERSION >= 0x050000
+    m_time_slider = new QwtSlider(l_time_bar_dock, Qt::Horizontal, QwtSlider::None, QwtSlider::BgBoth);
+#endif // QWT_VERSION >= 0x050000
     m_time_slider->setThumbWidth(20);
     m_time_slider->setThumbLength(60);
-    m_time_slider->setBorderWidth(4);
     m_time_slider->setMargins(2, 2);
+    m_time_slider->setRange(gdata->leftTime(), gdata->rightTime(), 1.0/10000.0, 1000);
+#endif // QWT_VERSION >= 0x060000
+    m_time_slider->setValue(l_view.currentTime());
+    m_time_slider->setTracking(true);
+    m_time_slider->setBorderWidth(4);
     m_time_slider->setMinimumWidth(200);
     m_time_slider->setWhatsThis("Drag the time slider to move back and forward through the sound file");
     connect(m_time_slider, SIGNAL(sliderMoved(double)), gdata, SLOT(updateActiveChunkTime(double)));
@@ -392,7 +419,7 @@ MainWindow::MainWindow(void)
     connect(&l_view, SIGNAL(onSlowUpdate(double)), m_time_slider, SLOT(setValue(double)));
     connect(gdata, SIGNAL(timeRangeChanged(double, double)), this, SLOT(setTimeRange(double, double)));
     l_time_bar_dock->addWidget(m_time_slider);
-  
+
     QToolBar * l_volume_meter_tool_bar = new QToolBar(tr("Volume Meter"), this);
     addToolBar(l_volume_meter_tool_bar);
     l_volume_meter_tool_bar->setIconSize(QSize(32, 32));
@@ -666,13 +693,13 @@ void MainWindow::keyPressEvent (QKeyEvent * p_event)
 //------------------------------------------------------------------------------
 void MainWindow::openFile(void)
 {
-    QString l_last_folder = QDir::convertSeparators(gdata->getSettingsValue("Dialogs/openFilesFolder", QDir::currentPath()));
+    QString l_last_folder = QDir::toNativeSeparators(gdata->getSettingsValue("Dialogs/openFilesFolder", QDir::currentPath()));
     QString l_file_name = QFileDialog::getOpenFileName(this, "Open File", l_last_folder, "Sounds (*.wav)");
     if(l_file_name.isEmpty())
     {
         return;
     }
-    l_file_name = QDir::convertSeparators(l_file_name);
+    l_file_name = QDir::toNativeSeparators(l_file_name);
     gdata->setSettingsValue("Dialogs/openFilesFolder", l_file_name);
     openFile(l_file_name.toStdString().c_str());
 }
@@ -745,7 +772,7 @@ void MainWindow::openRecord(bool p_and_play)
         l_step_size = l_play_sound_file->bufferSize()/2;
     }
 
-    QString l_temp_file_folder = gdata->getSettingsValue("General/tempFilesFolder", QDir::convertSeparators(QDir::currentPath()));
+    QString l_temp_file_folder = gdata->getSettingsValue("General/tempFilesFolder", QDir::toNativeSeparators(QDir::currentPath()));
     QDir l_dir = QDir(l_temp_file_folder);
     QFileInfo l_file_info;
     QString l_file_name;
@@ -766,7 +793,7 @@ void MainWindow::openRecord(bool p_and_play)
 
     SoundFile * l_new_sound_file = new SoundFile();
     QString l_new_filename(l_file_info.absoluteFilePath());
-    l_new_filename = QDir::convertSeparators(l_new_filename);
+    l_new_filename = QDir::toNativeSeparators(l_new_filename);
     if(!l_new_sound_file->openWrite(l_new_filename.toStdString().c_str(), l_rate, l_channels, l_bits, l_window_size, l_step_size))
     {
         delete l_new_sound_file; l_new_sound_file = NULL;
@@ -792,12 +819,12 @@ void MainWindow::windowMenuAboutToShow(void)
 {
     m_window_menu->clear();
 
-    QWidgetList l_windows = m_the_workspace->windowList();
+    QList<QMdiSubWindow *> l_windows = m_the_workspace->subWindowList();
     for(int l_i = 0; l_i < int(l_windows.count()); ++l_i )
     {
         QAction * l_action = m_window_menu->addAction(l_windows.at(l_i)->windowTitle(),this, SLOT( windowMenuActivated() ) );
         l_action->setData(l_i);
-        l_action->setChecked(m_the_workspace->activeWindow() == l_windows.at(l_i));
+        l_action->setChecked(m_the_workspace->activeSubWindow() == l_windows.at(l_i));
     }
 
     m_window_menu->addSeparator();
@@ -816,7 +843,7 @@ void MainWindow::windowMenuActivated(void)
 {
     int l_id = static_cast<QAction*>(sender())->data().toInt();
     std::cout << "windowMenuActivated " << l_id << std::endl ;
-    QWidget* l_widget = m_the_workspace->windowList().at( l_id );
+    QWidget* l_widget = m_the_workspace->subWindowList().at( l_id );
     if( l_widget )
     {
         l_widget->showNormal();
@@ -839,8 +866,8 @@ void MainWindow::message( QString p_string
 //------------------------------------------------------------------------------
 void MainWindow::closeAllWidgets(void)
 {
-    QWidgetList l_opened = m_the_workspace->windowList();
-    for(QWidgetList::iterator l_iterator = l_opened.begin(); l_iterator < l_opened.end(); l_iterator++)
+    QList<QMdiSubWindow *> l_opened = m_the_workspace->subWindowList();
+    for(QList<QMdiSubWindow *>::iterator l_iterator = l_opened.begin(); l_iterator < l_opened.end(); l_iterator++)
     {
         (*l_iterator)->close();
     }
@@ -930,7 +957,7 @@ QWidget * MainWindow::openView(int p_view_id)
     {
         if(l_parent)
         {
-            m_the_workspace->addWindow(l_widget);
+            m_the_workspace->addSubWindow(l_widget);
         }
         l_widget->show();
     }
@@ -946,7 +973,7 @@ void MainWindow::newViewAboutToShow(void)
     QMenu * l_experimental_menu = new QMenu("Experimental");
     QMenu * l_other_menu = new QMenu("Other");
 
-    QWidgetList l_opened = m_the_workspace->windowList();
+    QList<QMdiSubWindow *> l_opened = m_the_workspace->subWindowList();
 
     for(int j = 0; j < NUM_VIEWS; j++)
     {
@@ -974,7 +1001,7 @@ void MainWindow::newViewAboutToShow(void)
 
         connect(l_action, SIGNAL(triggered()), m_create_signal_mapper, SLOT(map()));
         m_create_signal_mapper->setMapping(l_action, j);
-        for(QWidgetList::iterator l_iterator=l_opened.begin(); l_iterator<l_opened.end(); l_iterator++)
+        for(QList<QMdiSubWindow *>::iterator l_iterator=l_opened.begin(); l_iterator<l_opened.end(); l_iterator++)
         {
             if(QString((*l_iterator)->metaObject()->className()) == g_view_data[j].m_class_name)
             {
@@ -1054,7 +1081,18 @@ void MainWindow::setTimeRange( double p_min
 {
     if(m_time_slider)
     {
-        m_time_slider->setRange(p_min, p_max, m_time_slider->step(), 1000);
+#if QWT_VERSION >= 0x060000
+
+        // In Qwt 6.x range has been replaced by scale
+        m_time_slider->setScale(p_min, p_max);
+        // and steps and pages are managed by qwt_abstract_slider class
+        double l_range_wdith = ( p_min < p_max ? p_max - p_min : p_min - p_max);
+        unsigned int l_nb_steps = ((unsigned int)(l_range_wdith * 10000.0));
+        m_time_slider->setTotalSteps(l_nb_steps > m_time_slider->totalSteps() ? l_nb_steps : m_time_slider->totalSteps());
+        m_time_slider->setPageSteps(1000);
+#else // QWT_VERSION >= 0x060000
+        m_time_slider->setRange(p_min, p_max, m_time_slider->step(),1000);
+#endif // QWT_VERSION >= 0x060000
     }
 }
 
@@ -1412,14 +1450,14 @@ bool MainWindow::loadViewGeometry(void)
 //------------------------------------------------------------------------------
 void MainWindow::saveViewGeometry(void)
 {
-    QWidgetList l_opened = m_the_workspace->windowList();
+    QList<QMdiSubWindow *> l_opened = m_the_workspace->subWindowList();
 
     for(int l_j = 0; l_j < NUM_VIEWS; l_j++)
     {
         QString l_base = QString("geometry/") + g_view_data[l_j].m_class_name;
 
         bool l_found = false;
-        for(QWidgetList::iterator l_iterator = l_opened.begin(); l_iterator < l_opened.end(); l_iterator++)
+        for(QList<QMdiSubWindow *>::iterator l_iterator = l_opened.begin(); l_iterator < l_opened.end(); l_iterator++)
         {
             if(QString((*l_iterator)->metaObject()->className()) == g_view_data[l_j].m_class_name)
             {

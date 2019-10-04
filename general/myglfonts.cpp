@@ -69,7 +69,7 @@ void MyGLFont::drawGLtextRaw(float x, float y, QString s) const
   unsigned char ch;
   for(int j = 0; j < s.size(); ++j)
     {
-      ch = s.at(j).toAscii();
+      ch = s.at(j).toLatin1();
       glRasterPos2f(x, y);
       glDrawPixels(c[ch]->w_raw(), c[ch]->h(), GL_ALPHA, GL_UNSIGNED_BYTE, c[ch]->data());
       x += c[ch]->w();

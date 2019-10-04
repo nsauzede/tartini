@@ -7,7 +7,6 @@
 ** place of a destructor.
 *****************************************************************************/
 #include <QColorDialog>
-#include <QCustomEvent>
 #include "mainwindow.h"
 #include "tartinisettingsdialog.h"
 #include "gdata.h"
@@ -119,7 +118,7 @@ void TartiniSettingsDialog::changeTempFolder(void)
 {
   if(tempFilesFolder) {
     QString path = getPath(tempFilesFolder->text());
-    if (path != "") tempFilesFolder->setText(QDir::convertSeparators(path));
+    if (path != "") tempFilesFolder->setText(QDir::toNativeSeparators(path));
   }
 }
 
@@ -235,6 +234,7 @@ void TartiniSettingsDialog::saveSettings(void)
 	  saveSetting(*it, group);
 	}
     }
+
   gdata->syncSettings();
   QApplication::postEvent(g_main_window, new QEvent(static_cast<QEvent::Type>(SETTINGS_CHANGED)));
   TartiniSettingsDialog::accept();
@@ -317,7 +317,7 @@ void TartiniSettingsDialog::onNoteRangeChoice(int choice)
 void TartiniSettingsDialog::setUnknownsToDefault(GData & p_gdata)
 {
   SetIfMissing("General/bindOpenSaveFolders", true);
-  SetIfMissing("General/tempFilesFolder", QDir::convertSeparators(QDir::currentPath()));
+  SetIfMissing("General/tempFilesFolder", QDir::toNativeSeparators(QDir::currentPath()));
   SetIfMissing("General/filenameGeneratingString", "Untitled");
   SetIfMissing("General/fileGeneratingNumber", 1);
   SetIfMissing("General/fileNumberOfDigits", 2);
@@ -358,9 +358,9 @@ void TartiniSettingsDialog::setUnknownsToDefault(GData & p_gdata)
   SetIfMissing("Display/useTopLevelWidgets", false);
 
   SetIfMissing("Dialogs/rememberOpenFolder", true);
-  SetIfMissing("Dialogs/openFilesFolder", QDir::convertSeparators(QDir::currentPath()));
+  SetIfMissing("Dialogs/openFilesFolder", QDir::toNativeSeparators(QDir::currentPath()));
   SetIfMissing("Dialogs/rememberSaveFolder", true);
-  SetIfMissing("Dialogs/saveFilesFolder", QDir::convertSeparators(QDir::currentPath()));
+  SetIfMissing("Dialogs/saveFilesFolder", QDir::toNativeSeparators(QDir::currentPath()));
   SetIfMissing("Dialogs/appendWav", true);
 
   SetIfMissing("Advanced/showMeanVarianceBars", false);

@@ -143,7 +143,7 @@ void SoundFile::setFilteredFilename(const char *filteredFilename_)
 //------------------------------------------------------------------------------
 QString SoundFile::getNextTempFilename(void) const
 {
-  QString tempFileFolder = gdata->getSettingsValue("General/tempFilesFolder", QDir::convertSeparators(QDir::currentPath()));
+  QString tempFileFolder = gdata->getSettingsValue("General/tempFilesFolder", QDir::toNativeSeparators(QDir::currentPath()));
   QDir dir = QDir(tempFileFolder);
   QFileInfo fileInfo;
   QString fileName;
